@@ -3,12 +3,11 @@
 #include "scene.h"
 #include "camera.h"
 #include "engine.h"
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
 #include "iostream"
 #include "mesh.h"
+#include "bitmap_image.hpp"
 
-#include "gltf_loader/gltf_loader.h"
+//#include "gltf_loader/gltf_loader.h"
 
 int main(int argc, char** argv) {
     Camera camera(Eigen::Quaternion<double>::Identity(), Eigen::Vector3d::Zero());
@@ -22,19 +21,21 @@ int main(int argc, char** argv) {
     mesh.SetVertices(vertices);
 
     Scene scene; 
-    scene.PushMesh(mesh);
+    for (int i = 0; i < 1024; i++) {
+    	scene.PushMesh(mesh);
+    }
 
 
     std::cout << "load" << std::endl;
     std::vector<Mesh> meshs;
 
-    LoadGLTF("./eva-01_rig.gltf", &meshs);
-    std::cout << "load finish" << std::endl;
+    //LoadGLTF("./eva-01_rig.gltf", &meshs);
+    //std::cout << "load finish" << std::endl;
 
-    for(auto mesh : meshs) {
+    //    for(auto mesh : meshs) {
         //std::cout << "triangles : " << mesh.GetTriangles().size() << std::endl;
-        scene.PushMesh(mesh);
-    }
+        //scene.PushMesh(mesh);
+	//}
 
     Engine engine;
     engine.SetCamera(camera);
@@ -44,14 +45,19 @@ int main(int argc, char** argv) {
 
 
     std::cout << "Scene " << scene.GetMeshs().size() << " Meshs exists" << std::endl;
-    size_t height = 480;
-    size_t width = 640;
+    size_t height = 1080;
+    size_t width = 1920;
     std::vector<char> rgb = engine.RenderRGBFrame(width, height);
 
-    cv::Mat M(height, width, CV_8UC3, cv::Scalar(0, 0, 255));
-    std::copy(rgb.begin(), rgb.end(), M.ptr(0));
-
-    cv::cvtColor(M,M, cv::COLOR_BGR2RGB);
-    cv::imwrite("test.png", M);
+    std::cout << "Raster Finish" << std::endl;
+    
+    bitmap_image image(width, height);
+    for (int row = 0; row < height; row++) {
+    	for (int col = 0; col < width;col++) {
+		char* color_ptr = rgb.data() + row * 3 * width + 3 * col;
+		image.set_pixel(col, row, color_ptr[0], color_ptr[1], color_ptr[2]);
+	}
+    }		
+    image.save_image("test.bmp");    
     return 0;
 }

@@ -3,6 +3,7 @@
 #include "iostream"
 #include <mutex>
 #include <thread>
+#include <mutex>
 
 void Engine::SetCamera(const Camera& camera) {
     camera_ = camera;

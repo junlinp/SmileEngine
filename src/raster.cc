@@ -4,7 +4,7 @@
 
 
 
-bool PointOnLineLeft3D(const Eigen::Vector3d& point, const Eigen::Vector3d& start, const Eigen::Vector3d& end) {
+inline bool PointOnLineLeft3D(const Eigen::Vector3d& point, const Eigen::Vector3d& start, const Eigen::Vector3d& end) {
     Eigen::Vector3d line_vector = end - start;
     Eigen::Vector3d point_vector = point - start;
     line_vector.normalize();
@@ -12,7 +12,7 @@ bool PointOnLineLeft3D(const Eigen::Vector3d& point, const Eigen::Vector3d& star
     return line_vector.cross(point_vector).z() > 0.0;
 }
 
-bool PointOnLineLeft(const Eigen::Vector2d& point, const Eigen::Vector4d& start, const Eigen::Vector4d& end) {
+inline bool PointOnLineLeft(const Eigen::Vector2d& point, const Eigen::Vector4d& start, const Eigen::Vector4d& end) {
     Eigen::Vector3d p3d = point.homogeneous();
     Eigen::Vector3d start_3d = start.head<2>().homogeneous();
     Eigen::Vector3d end_3d = end.head<2>().homogeneous();
